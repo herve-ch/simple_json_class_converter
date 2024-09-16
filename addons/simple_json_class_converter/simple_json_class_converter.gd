@@ -29,11 +29,13 @@ static func json_string_to_class(json_string: String) -> Object:
 ## Converts a JSON dictionary into a Godot class instance.
 ## This is the core deserialization function.
 static func json_to_class(json):
+	# Handle arrays recursively
 	if json is Array:
 		var array: Array = []
 		for element in json:
 			array.append(json_to_class(element))
 		return array
+	# A dictionary can represent an object, a simple type or resource, or a Godot dictionary
 	elif json is Dictionary:
 		var _class: Object
 		if json.has("gd_script"):
@@ -51,9 +53,16 @@ static func json_to_class(json):
 						for obj_array in array_remp:
 							_class.get(key).append(obj_array)
 					else:
-						_class[key] = json_to_class(value)
+						# Check if it is a dictionary, we can't just assign it because of typed dictionaries
+						var converted_class = json_to_class(value)
+						if converted_class is Dictionary:
+							for inner_key in converted_class:
+								_class[key][inner_key] = converted_class[inner_key]
+						else:
+							_class[key] = converted_class
 			return _class
 		elif json.has("gd_type"):
+			# Simple type, can be a resource or a simple variant
 			if json["gd_type"] == "Resource":
 				return ResourceLoader.load(json["value"])
 			elif json["gd_type"] == "String":
@@ -125,15 +134,17 @@ static func class_to_json(_class):
 			dictionary["gd_type"] = "Resource"
 			dictionary["value"] = _class.resource_path
 	elif _class is Dictionary:
-		for key: String in _class.keys():
+		# It is a normal Godot dictionary, we convert recursively
+		for key in _class.keys():
 			var value: Variant = _class[key]
 			dictionary[key] = class_to_json(value)
 	elif _class is Array:
+		# It is an array, we convert recursively
 		var array = []
 		for element in _class:
 			array.append(class_to_json(element))
 		return array
-	# Other non Object types
+	# Other simple types
 	else:
 		dictionary["gd_type"] = type_string(typeof(_class))
 		if (type_string(typeof(_class)) == "String"):
