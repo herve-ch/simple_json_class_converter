@@ -78,6 +78,7 @@ var player_data: PlayerData = JsonClassConverter.json_to_class(PlayerData, json_
 
 * **Exported Properties:** Only exported properties (those declared with `@export`) or properties with the `[PROPERTY_USAGE_STORAGE]` meta will be serialized and deserialized.
 
+* **Property naming:** Don't use "gd_script" or "gd_type" in any property name or dictionary key as they are used for internal type storage for Serialization and Deserialization.
 ## Credits
 
 Inspired by https://github.com/EiTaNBaRiBoA/JsonClassConverter.
