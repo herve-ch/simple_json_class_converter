@@ -28,7 +28,7 @@ static func json_string_to_class(json_string: String) -> Object:
 
 ## Converts a JSON dictionary into a Godot class instance.
 ## This is the core deserialization function.
-static func json_to_class(json):
+static func json_to_class(json) -> Variant:
 	# Handle arrays recursively
 	if json is Array:
 		var array: Array = []
@@ -76,6 +76,8 @@ static func json_to_class(json):
 				var value: Variant = json[key]
 				dictionary[key] = json_to_class(value)
 			return dictionary
+	else:
+		return
 
 ## Helper function to find a GDScript by its class name.
 static func get_gdscript(hint_class: String) -> GDScript:
@@ -108,7 +110,7 @@ static func class_to_json_string(_class) -> String:
 
 ## Converts a Godot class instance into a JSON dictionary.
 ## This is the core serialization function.
-static func class_to_json(_class):
+static func class_to_json(_class) -> Variant:
 	var dictionary: Dictionary = {}
 	
 	if _class is Object:
