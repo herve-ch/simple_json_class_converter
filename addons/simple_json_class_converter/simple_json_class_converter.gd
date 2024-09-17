@@ -72,11 +72,15 @@ static func json_to_class(json) -> Variant:
 		else:
 			# It is a normal Godot dictionary
 			var dictionary = {}
-			for key: String in json.keys():
+			for key in json.keys():
 				var value: Variant = json[key]
-				dictionary[key] = json_to_class(value)
+				if type_string(typeof(key)) == "String":
+					dictionary[json_to_class(str_to_var(key))] = json_to_class(value)
+				else:
+					dictionary[json_to_class(str_to_var(JSON.stringify(key)))] = json_to_class(value)
 			return dictionary
 	else:
+		# Should never happen
 		return
 
 ## Helper function to find a GDScript by its class name.
@@ -139,7 +143,7 @@ static func class_to_json(_class) -> Variant:
 		# It is a normal Godot dictionary, we convert recursively
 		for key in _class.keys():
 			var value: Variant = _class[key]
-			dictionary[key] = class_to_json(value)
+			dictionary[class_to_json(key)] = class_to_json(value)
 	elif _class is Array:
 		# It is an array, we convert recursively
 		var array = []
