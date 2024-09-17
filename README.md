@@ -45,7 +45,7 @@ var json_data = SimpleJsonClassConverter.class_to_json(save_data)
 **b) Save JSON Data to a File:**
 
 ```gdscript
-var file_success: bool = JsonClassConverter.store_json_file("user://saves/save_data.json", json_data, "my_secret_key")  # Optional encryption key
+var file_success: bool = SimpleJsonClassConverter.store_json_file("user://saves/save_data.json", json_data, "my_secret_key")  # Optional encryption key
 
 # Check if saving was successful:
 if file_success:
@@ -59,7 +59,7 @@ else:
 **a) Load JSON Data from a File:**
 
 ```gdscript
-var loaded_data: SaveData = JsonClassConverter.json_file_to_class("user://saves/save_data.json", "my_secret_key") # Optional decryption key
+var loaded_data: SaveData = SimpleJsonClassConverter.json_file_to_class("user://saves/save_data.json", "my_secret_key") # Optional decryption key
 
 if loaded_data:
 	# ... (Access properties of the loaded_data)
@@ -71,7 +71,7 @@ else:
 
 ```gdscript
 var json_dict = { "name": "Bob", "score": 2000 }
-var player_data: PlayerData = JsonClassConverter.json_to_class(PlayerData, json_dict)
+var player_data: PlayerData = SimpleJsonClassConverter.json_to_class(json_dict)
 ```
 
 ## Important Notes
