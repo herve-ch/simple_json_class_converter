@@ -29,6 +29,7 @@ static func json_string_to_class(json_string: String) -> Object:
 ## Converts a JSON dictionary into a Godot class instance.
 ## This is the core deserialization function.
 static func json_to_class(json) -> Variant:
+	
 	# Handle arrays recursively
 	if json is Array:
 		var array: Array = []
@@ -115,8 +116,14 @@ static func class_to_json_string(_class) -> String:
 ## Converts a Godot class instance into a JSON dictionary.
 ## This is the core serialization function.
 static func class_to_json(_class) -> Variant:
+	# It is an array, we convert recursively
+	if _class is Array:
+		var array = []
+		for element in _class:
+			array.append(class_to_json(element))
+		return array
+
 	var dictionary: Dictionary = {}
-	
 	if _class is Object:
 		var script = _class.get_script()
 		if script:
@@ -144,12 +151,6 @@ static func class_to_json(_class) -> Variant:
 		for key in _class.keys():
 			var value: Variant = _class[key]
 			dictionary[class_to_json(key)] = class_to_json(value)
-	elif _class is Array:
-		# It is an array, we convert recursively
-		var array = []
-		for element in _class:
-			array.append(class_to_json(element))
-		return array
 	# Other simple types
 	else:
 		dictionary["gd_type"] = type_string(typeof(_class))
