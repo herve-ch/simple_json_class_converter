@@ -24,12 +24,11 @@ static func json_string_to_class(json_string: String) -> Object:
 	var parse_result: Error = json.parse(json_string)
 	if parse_result == Error.OK:
 		return json_to_class(json.data)
-	return null
+	return
 
 ## Converts a JSON dictionary into a Godot class instance.
 ## This is the core deserialization function.
 static func json_to_class(json) -> Variant:
-	
 	# Handle arrays recursively
 	if json is Array:
 		var array: Array = []
@@ -89,7 +88,7 @@ static func get_gdscript(hint_class: String) -> GDScript:
 	for className: Dictionary in ProjectSettings.get_global_class_list():
 		if className. class == hint_class:
 			return load(className.path)
-	return null
+	return
 
 #endregion
 
@@ -125,9 +124,9 @@ static func class_to_json(_class) -> Variant:
 
 	var dictionary: Dictionary = {}
 	if _class is Object:
+		# If it is an object we store it's script name for reference during deserialization
 		var script = _class.get_script()
 		if script:
-			# Store the script name for reference during deserialization
 			dictionary["gd_script"] = script.get_global_name()
 			var properties: Array = _class.get_property_list()
 
@@ -151,12 +150,14 @@ static func class_to_json(_class) -> Variant:
 		for key in _class.keys():
 			var value: Variant = _class[key]
 			dictionary[class_to_json(key)] = class_to_json(value)
-	# Other simple types
+	# Other simple types, can be a String or a simple variant
 	else:
+		# If it is a string we store as is
 		dictionary["gd_type"] = type_string(typeof(_class))
 		if (type_string(typeof(_class)) == "String"):
 			dictionary["value"] = _class
 		else:
+			# Else we convert into a String
 			dictionary["value"] = var_to_str(_class)
 	return dictionary
 #endregion
