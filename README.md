@@ -10,10 +10,11 @@ This GDScript provides a set of utility functions for converting Godot classes t
 	* Supports saving JSON data to files (with optional encryption).
 	* Will store all scripts names and types in JSON.
 	* Support resources.
-	* Supports dictionnaries.
+	* Supports dictionnaries of any type of key
+	* Supports inheritence
 * **Deserialization (JSON to Class):**
 	* Loads JSON data from files (with optional decryption).
-	* No need to specify target class.
+	* No need to specify target class as the script will automatically get the types from the JSON format.
 	* Converts JSON strings and dictionaries into class instances.
 	* Handles nested object structures.
 
@@ -75,12 +76,14 @@ var player_data: PlayerData = SimpleJsonClassConverter.json_to_class(json_dict)
 ```
 
 ## Important Notes
+* **Use class_name:** Only object with a class_name will get serialized
 
 * **Exported Properties:** Only exported properties (those declared with `@export`) or properties with the `[PROPERTY_USAGE_STORAGE]` meta will be serialized and deserialized.
 
-* **Property naming:** Don't use "gd_script" or "gd_type" in any property name or dictionary key as they are used for internal type storage for Serialization and Deserialization.
+* **Properties naming:** Don't use "gd_script" or "gd_type" in any property name or dictionary key as they are used for internal type storage for Serialization and Deserialization.
+
 ## Credits
 
-Inspired by https://github.com/EiTaNBaRiBoA/JsonClassConverter.
+Original code: https://github.com/EiTaNBaRiBoA/JsonClassConverter.
 
 Thanks to him
